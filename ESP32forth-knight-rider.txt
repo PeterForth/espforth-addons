@@ -1,9 +1,9 @@
+( KNIGHT RIDER  "long version" for ESP32Forth ) 
 DECIMAL
  
 :  delay 300 ms ;
              
-0 value test
-             
+           
 15 constant GPIO15 
              
 4 constant GPIO4 
@@ -47,7 +47,6 @@ DECIMAL
 
 low  VALUE WOW
              
-( : i1  GPIO15 OUTPUT PINMODE low GPIO15 pin  GPIO4 OUTPUT PINMODE low GPIO4 pin ; )
              
 : all2  WOW GPIO15 pin  WOW GPIO4 pin ;
              
@@ -86,8 +85,6 @@ GPIO5 ,  GPIO4 ,   GPIO2 , GPIO15 ,
 : KNIGHT-RIDER  HIGH ALL 20 0 DO  I BLINK   LOOP ; 
     
          
-: RUN ( --)  10 0 DO KNIGHT-RIDER LOOP ; 
+: RUN ( --)  init   10 0 DO KNIGHT-RIDER LOOP ; 
 
-init
-
-( DEL4 MS )
+ 
