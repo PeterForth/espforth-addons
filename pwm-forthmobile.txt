@@ -21,13 +21,10 @@ FORTH DEFINITIONS also LEDC   ( vocabulary )
 	    dirright1  OUTPUT pinmode  dirright2 OUTPUT pinmode ;
 
 : init_pwm_pins  ( --)   
-         PWML chLEFT  ledcAttachPin   PWMR chRIGHT ledcAttachPin 
-	       chLEFT 40000 10 ledcSetup   chRIGHT 40000 10 ledcSetup ;
+                  PWML chLEFT      ledcAttachPin        PWMR chRIGHT   ledcAttachPin 
+	          chLEFT 40000 10  ledcSetup        chRIGHT 40000 10   ledcSetup ;
 
-
-: FORw    HIGH dirleft1  pin    LOW  dirleft2  pin ;
-: BAKw    HIGH dirleft2  pin    LOW  dirleft1  pin ;
-
+ 
 : SETPINS   ( n n n n  --)   
                dirleft1 pin     dirleft2 pin  
                dirright1 pin    dirright2 pin  ;
@@ -37,17 +34,13 @@ FORTH DEFINITIONS also LEDC   ( vocabulary )
 : LEFT   0 1  1 0 SETPINS ;
 : RIGHT  1 0  0 1 SETPINS ;	
 
-: FWOLD    HIGH dirleft1 pin LOW dirleft2 pin  
-           HIGH dirright1 pin LOW dirright2 pin  ;
-		
-: BWOLD    HIGH dirleft2 pin LOW dirleft1 pin  
-           HIGH dirright2 pin LOW dirright1 pin  ;
-
+ 
 : initall   ( --)  init_dir_pins  init_pwm_pins FW ;
 
 : motleft  ( speed -- ) DUP chLEFT swap ledcWrite chRIGHT swap ledcWrite ;
 : motright ( speed -- ) DUP chRIGHT swap ledcWrite ; 
 
+( abbreviations for fast typing)
 : ml  motleft ;
 : mr  motright ;
 	
@@ -77,4 +70,4 @@ initall
 ' RUN  is  user7  
 ' stop is  user8  
 	
-  \\ still on development 
+  \\ more to follow , still on development 
