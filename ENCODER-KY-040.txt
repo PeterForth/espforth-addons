@@ -19,12 +19,12 @@ timers
              4 digitalread  to pinB   15 digitalRead DUP to pinA 
              if                \  pin A  high 
                oldA if         \  no change  
-			        else       \  ****  rising edge 
-			           pinB if  1 +to var else  -1 +to var then  
-			        then
-		      then               \  pin A  low 
-			      pinA to oldA   \  4 digitalread 
-		      RERUN	 ;					
+		    else       \  ****  rising edge 
+	            pinB if  1 +to var else  -1 +to var then  
+		    then
+             then               \  pin A  low 
+pinA to oldA                    \  save state
+RERUN	 ;					
  
 ' readvar  10000 0 interval   \ and run that every 1/100 seconds
                               \ experiment with other values...   
