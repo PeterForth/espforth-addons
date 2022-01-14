@@ -199,6 +199,12 @@ typedef int64_t dcell_t;
   X("Serial.readBytes", SERIAL_READ_BYTES, n0 = Serial.readBytes(b1, n0); NIP) \
   X("Serial.write", SERIAL_WRITE, n0 = Serial.write(b1, n0); NIP) \
   X("Serial.flush", SERIAL_FLUSH, Serial.flush()) \
+  X("Serial2.begin", SERIAL2_BEGIN, Serial2.begin(tos); DROP) \
+  X("Serial2.end", SERIAL2_END, Serial2.end()) \
+  X("Serial2.available", SERIAL2_AVAILABLE, PUSH Serial2.available()) \
+  X("Serial2.readBytes", SERIAL2_READ_BYTES, n0 = Serial2.readBytes(b1, n0); NIP) \
+  X("Serial2.write", SERIAL2_WRITE, n0 = Serial2.write(b1, n0); NIP) \
+  X("Serial2.flush", SERIAL2_FLUSH, Serial2.flush()) \
   /* Pins and PWM */ \
   Y(pinMode, pinMode(n1, n0); DROPn(2)) \
   Y(digitalWrite, digitalWrite(n1, n0); DROPn(2)) \
