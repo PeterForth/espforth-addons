@@ -6,32 +6,24 @@ void setuptftdemo(void) {
   // Initialize color screen
   tft.init();
   tft.fillScreen(TFT_BLACK);  
-  // Set starting coordinates (20, 10), font 4
   tft.setCursor(20, 10, 4);
-  // Set text color to white, black text background
   tft.setTextColor(TFT_WHITE, TFT_BLACK);
-  // Set the displayed text. Note that there is a line break here \ n
   tft.println("White Text\n");
   tft.println("Next White Text");
-  // Set starting coordinates (10, 100), font 2, text color red, white text background
   tft.setCursor(10, 100);
   tft.setTextFont(2);
   tft.setTextColor(TFT_RED, TFT_WHITE);
   tft.println("Red Text, White Background");
-  // Set starting coordinates (10, 140), font 4, text color green, no background setting
   tft.setCursor(10, 140, 4);
   tft.setTextColor(TFT_GREEN);
   tft.println("Green text");
-  // Set starting coordinates (70, 180), font unchanged, text color blue, yellow text background
   tft.setCursor(70, 180);
   tft.setTextColor(TFT_BLUE, TFT_YELLOW);
   tft.println("Blue text");
-  // Set starting coordinates (50, 220), font 4, text color yellow, no background setting
   tft.setCursor(50, 220);
   tft.setTextFont(4);
   tft.setTextColor(TFT_YELLOW);
   tft.println("2020-06-16");
-  // Set starting coordinates (50, 260), font 7, text color pink, no background setting
   tft.setCursor(50, 260);
   tft.setTextFont(7);
   tft.setTextColor(TFT_PINK);
