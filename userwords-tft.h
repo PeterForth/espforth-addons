@@ -37,6 +37,7 @@ void setuptftdemo(void) {
   Y(tftcursor, tft.setCursor(n1, n0); DROPn(2)) \
   Y(tftcursorink, tft.setCursor(n2,n1, n0); DROPn(2)) \
   Y(tftTextFont, tft.setTextFont(n0); DROP) \
+  Y(tftTextSize, tft.setTextSize(n0); DROP) \  
   Y(tftTextColor, tft.setTextColor(n1,n0); DROP) \
   Y(tftprintln, tft.println(c0); DROP) \
   Y(tftprint, tft.print(c0); DROP) \
