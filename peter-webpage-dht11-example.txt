@@ -1,0 +1,122 @@
+
+forth also streams also httpd
+      also web-interface 
+	 
+0 value mystr  0 value mystr#  0 value mystrn
+: mystr-init   10 dup allocate throw to mystr to mystrn 0 to mystr# ;
+: mystr-grow   mystrn 1+ 2* to mystrn mystr mystrn resize throw to mystr ;
+: +mystr ( ch -- ) mystr# mystrn >= if mystr-grow then
+                   mystr mystr# + c! 1 +to mystr# ;
+: 1tch   begin >in @ #tib @ >= while refill drop nl +mystr repeat ;
+: tch ( -- ch ) tib >in @ + c@ ;
+: |? ( -- f ) 1tch tch [char] | = ;
+: m$ mystr-init
+     begin |? 0= while tch +mystr 1 >in +! repeat 1 >in +!
+     mystr mystr# ;
+: m| m$ state @ if swap [ internals ] aliteral aliteral then ; immediate  
+
+initdh11
+
+also httpd
+
+0 value counter  
+: rtemp>str  ( --addr n )     <# # # 46 hold  # # #>  ; 
+: counter>str  ( --addr n ) 1 +to counter counter <# #S #>  ; 
+
+: page-html
+  s" text/html" ok-response m|
+  <meta http-equiv="refresh" content="8" >
+   <h1>Temp & Humidity Demo</h1>   
+  <h2>temperature C:   | send 
+   rtemp rtemp>str  send 
+   m| </h2>   | send 
+   m| <h2>humidity % :  | send 
+   200 ms 
+   rhumid rtemp>str  send 
+     m| </h2>   | send 
+   m| <h4>----------<h4><br> | send 
+   m| <h3>Number requests : | send   
+   counter>str send  m| </h3>   | send 
+   ;
+
+: serve-page
+  ." Requesting > " path type cr
+  path s" /" str= if page-html exit then
+  notfound-response
+;
+
+
+: runpage   login 80 server 
+       begin handleClient if serve-page then pause again ;
+	   
+\ edit here your 	   
+\    router name and password  
+      z" ssid"   z" password"   runpage
+  
+ 
+ z" Chandon2"   z" 91100000"   runpage
+ 
+ 
+ 
+	 	
+            \ <span id="temperature">%TEMPERATURE%</span>
+\    <span id="humidity">%HUMIDITY%</span>
+
+\ zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz
+ 
+ 
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+ 
+ 
+ 
+ 
+ : animate m| 
+<!DOCTYPE HTML><html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+  <style>
+    html {
+     font-family: Arial;
+     display: inline-block;
+     margin: 0px auto;
+     text-align: center;
+    }
+    h2 { font-size: 3.0rem; }
+    p { font-size: 3.0rem; }
+    .units { font-size: 1.2rem; }
+    .dht-labels{
+      font-size: 1.5rem;
+      vertical-align:middle;
+      padding-bottom: 15px;
+    }
+  </style>
+</head>
+<body>
+  <h2>ESP32 DHT Server</h2>
+  <p>
+    <i class="fas fa-thermometer-half" style="color:#059e8a;"></i> 
+    <span class="dht-labels">Temperature</span> 
+    <span id="temperature">%TEMPERATURE%</span>
+    <sup class="units">&deg;C</sup>
+  </p>    <p>
+    <i class="fas fa-tint" style="color:#00add6;"></i> 
+    <span class="dht-labels">Humidity</span>
+    <span id="humidity">%HUMIDITY%</span>
+    <sup class="units">&percnt;</sup>
+  </p>
+</body>  <script>
+setInterval(function ( ) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("temperature").innerHTML = this.responseText; }  };
+  xhttp.open("GET", "/temperature", true);   xhttp.send();  }, 10000 ) ;
+
+setInterval(function ( ) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("humidity").innerHTML = this.responseText;   }  };
+  xhttp.open("GET", "/humidity", true);   xhttp.send(); }, 10000 ) ;
+</script>   </html>  |  ;
