@@ -1,3 +1,9 @@
+\ by Peterforth  August 2022
+\ with all my gratitude to Brad Nelson for his outstanding support and development
+\ of ESP32forth started on eforth by Bill Munch, Dr. Ting and many FIG int. members 
+\ join and support our developments on the  Forth2020 group.
+\ https://www.facebook.com/groups/forth2020/
+\ and the ESP32forth support team https://www.facebook.com/groups/esp32a/
 
 forth also streams also httpd
       also web-interface 
@@ -14,6 +20,9 @@ forth also streams also httpd
      begin |? 0= while tch +mystr 1 >in +! repeat 1 >in +!
      mystr mystr# ;
 : m| m$ state @ if swap [ internals ] aliteral aliteral then ; immediate  
+
+\    initdh11  rtemp and rhumid are from project #16   *****
+\    if you don´t have them remove from the source     *****
 
 initdh11
 
@@ -49,8 +58,8 @@ also httpd
 : runpage   login 80 server 
        begin handleClient if serve-page then pause again ;
 	   
-\ edit here your 	   
-\    router name and password  
+\ edit here your 	   ***********************************
+\    router name and password  ********************************
     
     z" ssid"   z" password"   runpage
   
