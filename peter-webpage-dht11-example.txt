@@ -23,6 +23,8 @@ forth also streams also httpd
 
 \    initdh11  rtemp and rhumid are from project #16   *****
 \    if you don´t have them remove from the source     *****
+\    or use the line below with 3 fake words  
+: initdh11 ;   : rtemp 22 ;   : rhumid 45 ;   ( 3 fake words)
 
 initdh11
 
