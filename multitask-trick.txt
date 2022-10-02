@@ -1,0 +1,23 @@
+\ Jan Langevad  posted in our Forth2020 group, this modification to run diff. tasks inside a COLON def.
+\ "Here a TIP regarding starting a TASK from a colon definition/a word (ESP32Forth).
+\ You need this "EVALUATE trick" if you will have an "embedded system", that includes one or more TASKs, 
+\ you will have started  without operator intervention.
+\ For demo, I have modified the simple TASK example from our online ESP32Forth Glossary.
+\ : hi begin ." Time is: " ms-ticks . cr 10000 ms PAUSE 
+\      again ; \ Print the tick every 10sec.
+\ The words to make and start this as a task,  can apparently not be used directly inside a word.
+\ Therefore the task words are put in a  string, and executed by EVALUATE.
+\ This trick is NOT invented by me, but I got it from Peter Forth yesterday " 
+
+
+: hi    begin .
+               " Time is: " ms-ticks . cr 
+                10000 ms PAUSE 
+        again  \ Print the tick every 10sec.
+;
+: PREP-HI 
+          S" ' hi 100 100 task my-counter" 
+                EVALUATE  \ define my-counter task
+          S"  my-counter start-task" 
+                EVALUATE  \ start the my-counter task
+;
