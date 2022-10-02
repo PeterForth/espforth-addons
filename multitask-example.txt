@@ -1,0 +1,14 @@
+\ Example for multitasker 
+
+tasks
+: hi   begin ." Time is: " ms-ticks . cr 1000 ms again ;
+' hi 100 100 task my-counter
+my-counter start-task
+
+\ Words are inside the TASKS vocabulary.
+\ PAUSE ( -- ) Yield to other tasks.
+\  MS ( n -- ) Pause for some number of milliseconds (yields to other tasks).
+\  TASK ( xt dsz rsz "name" -- ) Create a new task with dsz size data stack
+\                               and rsz size return stack running xt.
+\  START-TASK ( task -- ) Activate a task.
+\  .TASKS ( -- ) List running tasks.
