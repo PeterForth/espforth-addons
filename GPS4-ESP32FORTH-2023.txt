@@ -1,0 +1,108 @@
+\ GPS4 FOR  ESP32forth --  Neo chip  
+\ @ by PeterForth    4/3/2021 
+\ you may use under GNU license  contact peter4th2017@gmail.com
+\ distributed under the License is distributed on an "AS IS" BASIS,
+\ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+\ See the License for the specific language governing permissions and
+\ limitations under the License.
+\ more libraries and examples under the  https://esp32.forth2020.org
+\ visit also the Forth2020 Github repo   https://github.com/Esp32forth-org
+\ and my personal repository   https://github.com/PeterForth/espforth-addons
+ 
+DECIMAL FORTH
+300 constant sizeB
+CREATE  BUFF1  sizeB ALLOT
+CREATE COMMAND$ 120 ALLOT
+9600 Serial2.begin
+
+: serial-type2 ( a n -- ) Serial2.write drop ;
+: s2.a Serial2.available ;  : s2.r  Serial2.readBytes  ; 
+: serial-key2 begin pause S2.a until 0 >r rp@ 1 S2.r drop r> ; 
+0 value  inc1
+: increment  1 +to inc1 ;
+: b>emit-OLD  dup emit   buff1 inc1 + c!  increment ;
+: GPGGA S" GPGGA" ;
+: GPRMC S" GPRMC" ;
+0 VALUE STOREINC  
+
+: STORE-COMMAND$ STOREINC  IF    THEN  ; 
+
+: b>emit-new   dup emit DUP 36 = IF ( $) INC1 TO STOREINC  THEN  
+  DUP 10 = IF STORE-COMMAND$ THEN  buff1 inc1 + c!  increment ;
+\\  // bl fill  fill ( a a n -- )
+: b>emit   dup emit   buff1 inc1 + c!  increment ;
+: read-serial-till$  begin serial-key2   36 =  ( $) until ;
+
+: read-gps-command    
+   BUFF1 300 BL FILL read-serial-till$  COMMAND$ 120 BL FILL  ( BLANK) 
+   0 to inc1   begin serial-key2 DUP B>EMIT  10 =  ( ENTER) until
+    ( GPGGA ) ( COMMAND$ ) BUFF1  5 GPGGA  STR=    ( BUFF1  5 GPRMC  STR=    OR )
+	  IF CR ." IS A VALID COMMAND" CR THEN ; 
+ 
+			
+: RR READ-GPS-COMMAND ;
+
+0 VALUE  *BUFF1   0 VALUE INITSTR  0 VALUE ENDSTR
+BUFF1 TO *BUFF1
+0 VALUE GPSTIME   
+0 VALUE GPSLONG1  0 VALUE GPSLONG2  0 VALUE GPSLONG3 
+0 VALUE GPSLAT1   0 VALUE GPSLAT2   0 VALUE GPSLAT3
+
+
+: ++*BUFF1  1 +TO *BUFF1 ;
+
+: readto,   begin  *BUFF1 C@   ++*BUFF1 44 =  ( ,) until ;
+: readto.   begin   *BUFF1 C@  ++*BUFF1 46 =  ( .) until ;
+
+: convertgps  ( -- n f)  INITSTR  ENDSTR INITSTR -  1 -  S>NUMBER?  ; 
+
+
+: VV     ( read-gps$  ) 
+ BUFF1  TO *BUFF1
+ readto, *BUFF1 TO INITSTR   readto.  *BUFF1 TO ENDSTR 
+ convertgps IF TO GPSTIME THEN
+ 
+  readto,  *BUFF1 TO INITSTR   readto.  *BUFF1 TO ENDSTR 
+ convertgps IF TO GPSLAT1 THEN
+ 
+ ENDSTR TO INITSTR   readto,     *BUFF1 TO ENDSTR 
+ convertgps IF TO GPSLAT2 THEN
+ (  ." LONG : " GPSLONG1 .  ." --" GPSLONG2 . )
+ *BUFF1 C@ TO GPSLAT3  readto,
+ 
+ *BUFF1 TO INITSTR   readto.     *BUFF1 TO ENDSTR 
+ convertgps IF TO GPSLONG1 THEN
+  ENDSTR TO INITSTR   readto,     *BUFF1 TO ENDSTR 
+ convertgps IF TO GPSLONG2 THEN
+ *BUFF1 C@ TO GPSLONG3 ;
+ 
+ : print-gps$   (  --) 
+    VV   ( process the gps string )  
+    CR   ." LAT  : "  GPSLAT1  .  ." --" GPSLAT2  .  GPSLAT3  EMIT  CR
+         ." LONG : " GPSLONG1  .  ." --" GPSLONG2 .  GPSLONG3 EMIT  CR  ;
+
+
+\\ this code is work in progress 
+\\ you need first  run  : RR READ-GPS-COMMAND ; 
+\\ till you see the message    ." IS A VALID COMMAND" 
+\\ after that you can process the String from the GPS with VV
+\\ or you can print it with  latoled or  print-gps$ 
+  
+\ **************** example1 ******************************  
+BUFF1 6 + VALUE BB
+
+: TEST cr  0 to inc1   80 0  do  serial-key2 b>emit loop cr ;
+: TEST3 80 0 cr  do  serial-key2 emit loop cr ;
+: test2  20 0 do test loop ;
+
+\ **************** example2 with OLED ****************** 
+\ pls. be sure your ESP32forth version has #defined OLED support enabled
+ 
+  oled  oledinit  
+\\ send lat and long  to the OLED 
+: latoled oledcls oledhome oo
+ gpslat1  olednum z" -" oledprint gpslat2  olednumln oo
+ gpslong1 olednum z" -" oledprint gpslong2 olednumln oo ;
+      
+ 
+ 	 
